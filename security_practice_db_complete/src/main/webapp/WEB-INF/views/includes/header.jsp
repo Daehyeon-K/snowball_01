@@ -239,7 +239,7 @@
                             
                         </div>
                     </div>
-                    <!-- 좌측 하단 내용 -->
+                    <!-- 좌측 하단 내용: 수정 필요! -->
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
                         Start Bootstrap
