@@ -46,7 +46,7 @@
 	      <th scope="col">결재ID</th>
 	      <th scope="col">사용자ID</th>
 	      <th scope="col">결재종류</th>
-	      <th scope="col">결재승인</th>
+	      <th scope="col">결재승인번호</th>
 	      <th scope="col">중간승인권자</th>
 	      <th scope="col">최종승인권자</th>
 	      <th scope="col">결재반려사유</th>
