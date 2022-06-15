@@ -100,7 +100,7 @@ public class UserController {
 	      List<ApprovalFileDTO> attachList = new ArrayList<ApprovalFileDTO>();
 	      
 	      // 업로드 기본 폴더 지정
-	      String uploadBasicPath = "d:\\upload";
+	      String uploadBasicPath = "c:\\Users\\Jermaine\\Documents\\upload\\";
 	      
 	      // 업로드 세부 폴더 지정 / 날짜 기준으로 나눠주는 
 	      String uploadFolderPath = getFolder();
@@ -176,7 +176,7 @@ public class UserController {
 	public ResponseEntity<byte[]> getFile(String fileName) {
       log.info("이미지 요청" + fileName);
       
-      File file = new File("d:\\upload\\"+fileName);
+      File file = new File("c:\\Users\\Jermaine\\Documents\\upload\\"+fileName);
       
       ResponseEntity<byte[]> image = null;
       
@@ -198,7 +198,7 @@ public class UserController {
   	public ResponseEntity<Resource> downloadFile(String fileName){
 	     log.info("다운로드 요청 " + fileName);
 	     
-	     Resource resource = new FileSystemResource("d:\\upload\\" + fileName);
+	     Resource resource = new FileSystemResource("c:\\Users\\Jermaine\\Documents\\upload\\" + fileName);
 	     String resourceUidName = resource.getFilename();
 	     //uuid 값 제거
 	     String resourceName = resourceUidName.substring(resourceUidName.indexOf("_")+1);
