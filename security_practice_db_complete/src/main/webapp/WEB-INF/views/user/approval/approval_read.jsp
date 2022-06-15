@@ -38,7 +38,10 @@
   
   <div class="form-group">
     <label for="approval_commit_id">결재승인</label>
-    <input type="text" class="form-control" name="approval_commit_id" value="${dto.approval_commit_id}" readonly >
+    <div>
+	    <input type="text" class="form-control" name="approval_commit_id" value="${dto.approval_commit_id}" readonly >
+	    <!-- <input type="text" class="form-control" name="approval_commit_id" value="${dto.approval_commit_id}" readonly > -->
+    </div>
   </div>
   
   <div class="form-group">

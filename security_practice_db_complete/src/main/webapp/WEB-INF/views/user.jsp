@@ -1,8 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="../views/includes/header.jsp" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
+<%@include file="../views/includes/header.jsp" %>
 
 <!-- <div class="modal" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">

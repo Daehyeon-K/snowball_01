@@ -35,7 +35,7 @@
   <div class="form-group">
     <label for="approval_inter_id">중간승인권자</label>
     <!-- <input type="text" class="form-control" name="approval_inter_id" value="" readonly> -->
-    <select name="approval_inter_id" id="approval_inter_id" class="form-control">
+    <select name="approval_inter_id" id="approval_inter_id" class="form-control"> <!-- 옵션을 select 이용해서 불러오기는 안될지 -->
 		<option value="20220001">최지수 과장</option>
 		<option value="20220003">이결순 부장</option>
 		<option value="20220008">곽도원 부장</option>
