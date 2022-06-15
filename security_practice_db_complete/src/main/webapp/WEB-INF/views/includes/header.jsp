@@ -18,12 +18,16 @@
         <style>
          #content-block {
 		    display: inline-block;
-			width: 790px;
+			width: 30vw;
  		    height: fit-content;		    
  		    white-space: nowrap;
-		    overflow: hidden; */
+		    overflow: hidden; 
 		    border: none;
 		} 
+		<!-- 캘린더 -->
+		#calendar{
+		height:38rem;
+		}
 		</style>
 		
 		
