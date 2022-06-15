@@ -30,9 +30,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 	public void insert(ApprovalDTO insertDto) {
 		log.info("service---- "+insertDto);
 		//첨부 파일 개수만큼 루프돌기
-		mapper.insert(insertDto);
 		mapper.commit_insert();
-		mapper.commit_connect();
+		mapper.insert(insertDto);
 		
 		if(insertDto.getAttachList() == null) {
 			return;

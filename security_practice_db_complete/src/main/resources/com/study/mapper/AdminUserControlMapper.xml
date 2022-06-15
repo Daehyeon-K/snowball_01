@@ -15,6 +15,10 @@
 		values( #{mem_id}, #{grade_id} ,#{company_id}, #{dept_id} , #{mem_name}, #{mem_phone}, #{mem_mail}, #{mem_gender}, #{mem_birth}, #{mem_addr}, #{mem_sal}, #{mem_pwd}, #{mem_con_start}, #{mem_con_end}, #{mem_dcon_start}, #{mem_dcon_end}, 1)
 	</insert>
 	
+	<!-- 사용자 회원가입 시 메모 만들어주기 -->
+	<insert id="memoInsert">
+		insert into memo(memo_id,mem_id,memo_content) values(concat("MEMO",memo_seq.nextval),#{mem_id},#{memo_content})
+	</insert>
 	
 	<!-- 권한 부여 -->
 	<insert id="authInsert">
