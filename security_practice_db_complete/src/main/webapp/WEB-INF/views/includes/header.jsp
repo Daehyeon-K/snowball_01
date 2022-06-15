@@ -31,12 +31,12 @@
 		</style>
 		
 		
-		<!-- CDN -Bootstrap 4.6.1 -->
+		<!-- CDN - Bootstrap 4.6.1 -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
 	    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
 	    crossorigin="anonymous"/>
 	    
-	    <!-- CDN : jQuery 3.6.0 -->
+	    <!-- CDN - jQuery 3.6.0 -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"
 		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 		crossorigin="anonymous"></script>
@@ -50,6 +50,9 @@
         
         <!-- CSS - styles.css : 핵심 -->
         <link href="/resources/css/styles.css" rel="stylesheet" />
+        
+        <!-- CSS - Bootstrap 별도 파일 -->
+        <link href="/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         
         <!-- CSS - MetisMenu -->
 		<link href="/resources/vendor/metisMenu/metisMenu.min.css" rel="stylesheet"> 
