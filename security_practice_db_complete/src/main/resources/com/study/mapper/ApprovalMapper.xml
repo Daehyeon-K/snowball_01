@@ -64,11 +64,19 @@
 		select * from approval where approval_id = #{approval_id}
 	</select>
 	
-	<!-- <insert id="commit_insert">
+	<!-- 결재 생성 시 결재 승인도 만들어 주기 -->
+	<insert id="commit_insert">
 		insert into approval_commit(approval_commit_id, approval_commit_inter_check, approval_commit_final_check)  
-		values(concat('APPRCOM',approval_commit_seq.nextval), 'X', 'X')
+		values(concat('APPR_COMM',approval_commit_seq.nextval), '중간미승인', '최종미승인')
 	</insert>	
+	<!-- 방금 생성된 결재와 결재 승인 연결해주기 -->
+	<update id="commit_connect">
+		update approval
+		set approval_commit_id = concat('APPR_COMM',approval_commit_seq.currval())
+		where approval_id = #{approval_id}
+	</update>
 	
+	<!-- 
 	<select id ="get_commit" resultType = "com.study.dto.ApprovalCommitDTO">
    		select concat('APPRCOM',approval_commit_seq.currval) from approval_commit
 	</select>

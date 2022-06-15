@@ -31,6 +31,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 		log.info("service---- "+insertDto);
 		//첨부 파일 개수만큼 루프돌기
 		mapper.insert(insertDto);
+		mapper.commit_insert();
+		mapper.commit_connect();
 		
 		if(insertDto.getAttachList() == null) {
 			return;
@@ -67,8 +69,5 @@ public class ApprovalServiceImpl implements ApprovalService {
 	public boolean insertFile(ApprovalFileDTO attach) {
 		return attachMapper.insertFile(attach)==1?true:false;
 	}
-
-
-
 
 }
