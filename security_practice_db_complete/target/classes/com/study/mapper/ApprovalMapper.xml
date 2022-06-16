@@ -6,44 +6,37 @@
    <select id="select" resultType="com.study.dto.ApprovalDTO">
       <![CDATA[ 
      	select approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content
-		from (
-				select /*+INDEX_DESC(approval pk_approval)*/ rownum rn, approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
-    			from (
-    					select approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
-    					from approval 
-    					order by TO_NUMBER(REGEXP_SUBSTR(approval_id, '[0-9]+',1,1)) desc
+		from (select /*+INDEX_DESC(approval pk_approval)*/ rownum rn, approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
+    		  from (select approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
+    				from approval 
+    				order by TO_NUMBER(REGEXP_SUBSTR(approval_id, '[0-9]+',1,1)) desc
     		 		 )
     			where
       ]]> 
-      <include refid="criteria"></include>
+      		<include refid="criteria"></include>
+      		
       <![CDATA[
-		approval_id >= 'APPR1' and rownum <= (#{pageNum} * #{amount}))
-		where rn > (#{pageNum} - 1) * #{amount}
+		rownum <= (#{cri.pageNum} * #{cri.amount}) and  mem_id = #{mem_id})
+		where rn > ((#{cri.pageNum} - 1) * #{cri.amount})
 		
 	  ]]>
    </select>
    <!-- 동적 sql -->
 	<sql id="criteria">
 		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
-			<foreach collection="typeArr" item="type">
 			<!--  priefixOverides로 맨앞에 or 제거 후 시작 -->
 				<trim prefix="OR">
 					<choose>
 						<!-- approval_content 속에서 검색 -->
-						<when test="type=='W'.toString()">
-							approval_content like '%'||#{keyword}||'%'
+						<when test="cri.getType()=='W'.toString()">
+							approval_content like '%'||#{cri.keyword}||'%'
 						</when>
 						<!-- approval_id 속에서 검색 -->
-						<when test="type=='T'.toString()">
-							approval_id like '%'||#{keyword}||'%'
-						</when>
-						<!-- mem_id 속에서 검색 -->
-						<when test="type=='C'.toString()">
-							mem_id like '%'||#{keyword}||'%'
+						<when test="cri.getType()=='T'.toString()">
+							approval_id like '%'||#{cri.keyword}||'%'
 						</when>
 					</choose>
 				</trim>
-			</foreach>
 		</trim>
 	</sql>
    
@@ -51,8 +44,14 @@
    	<select id="totalCnt" resultType="int">
      select count(*) from approval where
      <include refid="criteria"></include>
-     approval_id >= 'APPR1'
+     approval_id >= 'APPR1' and mem_id = #{mem_id}
    </select>
+
+	<!-- 결재 생성 시 결재 승인 먼저 만들어 주기 -->
+	<insert id="commit_insert">
+		insert into approval_commit(approval_commit_id, approval_commit_inter_check, approval_commit_final_check)  
+		values(concat('APPR_COMM',approval_commit_seq.nextval), '중간미승인', '최종미승인')
+	</insert>	
 
 	<insert id="insert">
 		insert into approval(approval_id,mem_id,approval_commit_id,approval_type_id, approval_inter_id, approval_final_id, approval_reject, approval_content)  
@@ -64,16 +63,92 @@
 		select * from approval where approval_id = #{approval_id}
 	</select>
 	
-	<!-- 결재 생성 시 결재 승인 먼저 만들어 주기 -->
-	<insert id="commit_insert">
-		insert into approval_commit(approval_commit_id, approval_commit_inter_check, approval_commit_final_check)  
-		values(concat('APPR_COMM',approval_commit_seq.nextval), '중간미승인', '최종미승인')
-	</insert>	
+	<!-- 결재 수신 list -->
+	<select id="commitSelect" resultType="com.study.dto.ApprovalDTO">
+      <![CDATA[ 
+     	select approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content
+		from (select /*+INDEX_DESC(approval pk_approval)*/ rownum rn, approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
+    		  from (select approval_id,mem_id,approval_type_id,approval_commit_id,approval_inter_id,approval_final_id,approval_reject,approval_content 
+    				from approval 
+    				order by TO_NUMBER(REGEXP_SUBSTR(approval_id, '[0-9]+',1,1)) desc
+    		 		 )
+    			where
+      ]]> 
+      		<include refid="criteria2"></include>
+      		
+      <![CDATA[
+		rownum <= (#{cri.pageNum} * #{cri.amount}) and (approval_inter_id = #{mem_id} or approval_final_id = #{mem_id}))
+		where rn > ((#{cri.pageNum} - 1) * #{cri.amount})
+		
+	  ]]>
+   </select>
+   <!-- 결재수신 동적 sql -->
+	<sql id="criteria2">
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+			<!--  priefixOverides로 맨앞에 or 제거 후 시작 -->
+				<trim prefix="OR">
+					<choose>
+						<!-- approval_content 속에서 검색 -->
+						<when test="cri.getType()=='W'.toString()">
+							approval_content like '%'||#{cri.keyword}||'%'
+						</when>
+						<!-- approval_id 속에서 검색 -->
+						<when test="cri.getType()=='T'.toString()">
+							approval_id like '%'||#{cri.keyword}||'%'
+						</when>
+						<!-- mem_id 속에서 검색 -->
+						<when test="cri.getType()=='C'.toString()">
+							mem_id like '%'||#{cri.keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+		</trim>
+	</sql>
 	
-	<!-- 
-	<select id ="get_commit" resultType = "com.study.dto.ApprovalCommitDTO">
-   		select concat('APPRCOM',approval_commit_seq.currval) from approval_commit
+	
+	
+   
+    <!-- 전체 게시물 숫자니까 int형
+   	<select id="commTotalCnt" resultType="int">
+     select count(*) from approval where
+     <include refid="criteria"></include>
+     approval_id >= 'APPR1'
+    </select>
+    -->
+   
+   <!-- 결재 승인 1개 호출 -->
+	<select id="commitRead" resultType="com.study.dto.ApprovalCommitDTO">
+		select * from approval_commit where approval_commit_id = #{approval_commit_id}
 	</select>
-	 -->
+
+	<!-- 결재 중간 승인 -->
+	<update id="approvalInterCommit">
+		update approval_commit
+		set approval_commit_inter_check = '중간승인'
+		where approval_commit_id = #{approval_commit_id}
+	</update>
+	
+	<!-- 결재 최종 승인 -->
+	<update id="approvalFinalCommit">
+		update approval_commit
+		set approval_commit_final_check = '최종승인'
+		where approval_commit_id = #{approval_commit_id}
+	</update>
+	
+	<!-- 결재 중간 반려 -->
+	<update id="approvalInterReject">
+		update approval_commit
+		set approval_commit_inter_check = '중간반려', approval_reject=#{approval_reject}
+		where approval_commit_id = #{approval_commit_id}
+	</update>
+	
+	<!-- 결재 최종 반려 -->
+	<update id="approvalFinalReject">
+		update approval_commit
+		set approval_commit_final_check = '최종반려', approval_reject=#{approval_reject}
+		where approval_commit_id = #{approval_commit_id}
+	</update>
+	
+	
 	
 </mapper>

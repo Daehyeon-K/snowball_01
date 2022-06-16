@@ -40,6 +40,9 @@ public class AdminUserControlServiceImpl implements AdminUserControlService {
 		// 사용자 추가 성공하면 result 에 담기 => 회원가입 시켜주기
 		boolean result = mapper.userInsert(user)==1;
 		
+		// 사용자 추가 성공 후 메모 생성
+		mapper.memoInsert(user);
+		
 		// 회원가입 시켜줬으면 이 때 권한도 같이 부여해주기
 		AuthorityDTO auth = new AuthorityDTO(user.getMem_id(), "ROLE_USER");
 		mapper.authInsert(auth);

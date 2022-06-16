@@ -5,7 +5,7 @@
 <select id="mSelect" resultType="com.study.dto.MsgDTO">
 	select msg_id, sender_id, receiver_id, msg_content
 	from msg
-	where receiver_id = '20220011'
+	where receiver_id = #{mem_id}
 </select> 
 
 <select id="msgReadRow" resultType="com.study.dto.MsgDTO">
@@ -16,7 +16,7 @@
 
 <insert id="msgInsert">
 	insert into msg
-	values(concat('MSG',msg_seq.nextval), '20220011', #{receiver_id}, #{msg_content}, sysdate)
+	values(concat('MSG',msg_seq.nextval), #{mem_id}, #{receiver_id}, #{msg_content}, sysdate)
 </insert>
 
    <delete id="msgDelete">

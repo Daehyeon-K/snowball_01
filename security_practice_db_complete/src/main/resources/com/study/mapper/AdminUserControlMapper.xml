@@ -17,7 +17,7 @@
 	
 	<!-- 사용자 회원가입 시 메모 만들어주기 -->
 	<insert id="memoInsert">
-		insert into memo(memo_id,mem_id,memo_content) values(concat("MEMO",memo_seq.nextval),#{mem_id},#{memo_content})
+		insert into memo(memo_id,mem_id,memo_content) values(concat('MEMO',memo_seq.nextval),#{mem_id},' ')
 	</insert>
 	
 	<!-- 권한 부여 -->

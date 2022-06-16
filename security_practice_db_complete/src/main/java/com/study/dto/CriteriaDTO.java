@@ -26,6 +26,7 @@ public class CriteriaDTO {
 		this.pageNum = pageNum;
 		this.amount = amount;
 	}
+
 	
 	// 검색 조건을 String[]로 변경
 	// 배열로 생성

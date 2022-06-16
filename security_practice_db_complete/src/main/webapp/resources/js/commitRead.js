@@ -2,8 +2,31 @@
  * 
  */
 $(function(){
+	let approval_commit_form = $("#approval_commit_form");
+
+	$.ajaxPrefilter(function(options) {
+	  var headerName = '${_csrf.headerName}';
+	  var token = '${_csrf.token}';
+	  if (options.method === 'POST') {
+	      options.headers = options.headers || {};
+	      options.headers[headerName] = token;
+  		}
+	})
+	
+	$(".approval_commit").click(function(e){
+		e.preventDefault();
+		approval_commit_form.attr("action","/user/approvalCommit");
+		approval_commit_form.submit();
+	})
+	
+	$(".approval_reject").click(function(e){
+		e.preventDefault();
+		approval_commit_form.attr("action","/user/approvalReject");
+		approval_commit_form.submit();
+	})
+
 	$(".btn-primary").click(function(){
-		location.href="/user/approvalList";
+		location.href="/user/approvalCommitList";
 	})
 	
 	$.getJSON({
@@ -38,7 +61,7 @@ $(function(){
 				//fileCallPath : 파라미터로 넘기는 방식, 인코딩 된 방식
 				str += "<li data-path='" + obj.approval_file_dir + "' data-uuid='" + obj.approval_file_id + "' data-filename='" + obj.approval_file_name + "' data-type='" + obj.approval_file_type + "'>";
 				str += "<a href=\"javascript:showImage(\'" + oriPath + "\')\">";
-				str += "<img src='display?fileName=" + fileCallPath + "'></a>";
+				str += "<img src='/display?fileName=" + fileCallPath + "'></a>";
 				str += "<div>" + obj.approval_file_name;
 				str += "</div></li>";
 				

@@ -2,10 +2,12 @@ package com.study.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.study.dto.ApprovalCommitDTO;
 import com.study.dto.ApprovalDTO;
 import com.study.dto.ApprovalFileDTO;
 import com.study.dto.CriteriaDTO;
@@ -23,6 +25,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 	
 	@Autowired
 	private AttachMapper attachMapper;
+	
+	/* 결재 기안, 조회 */
 	
 	
 	@Transactional
@@ -45,13 +49,13 @@ public class ApprovalServiceImpl implements ApprovalService {
 	}
 
 	@Override
-	public List<ApprovalDTO> select(CriteriaDTO cri) {
-		return mapper.select(cri);
+	public List<ApprovalDTO> select(@Param("cri") CriteriaDTO cri, @Param("mem_id") String mem_id/*, @Param("typeArr") String[] typeArr*/) {
+		return mapper.select(cri, mem_id/*, typeArr*/);
 	}
 
 	@Override
-	public int totalCnt(CriteriaDTO cri) {
-		return mapper.totalCnt(cri);
+	public int totalCnt(@Param("cri") CriteriaDTO cri, @Param("mem_id") String mem_id/*, @Param("typeArr") String[] typeArr*/) {
+		return mapper.totalCnt(cri,mem_id/*, typeArr*/);
 	}
 
 	@Override
@@ -69,4 +73,48 @@ public class ApprovalServiceImpl implements ApprovalService {
 		return attachMapper.insertFile(attach)==1?true:false;
 	}
 
+	@Override
+	public ApprovalCommitDTO commitRead(String approval_commit_id) {
+		return mapper.commitRead(approval_commit_id);
+	}
+	
+	// 결재 수신 
+	@Override
+	public List<ApprovalDTO> commitSelect(@Param("cri") CriteriaDTO cri, @Param("mem_id") String mem_id/*, @Param("typeArr") String[] typeArr*/) {
+		return mapper.commitSelect(cri, mem_id/*, typeArr*/);
+	}
+
+	@Override
+	public boolean approvalInterCommit(String approval_commit_id) {
+		return mapper.approvalInterCommit(approval_commit_id)==1?true:false;
+	}
+
+	@Override
+	public boolean approvalFinalCommit(String approval_commit_id) {
+		return mapper.approvalFinalCommit(approval_commit_id)==1?true:false;
+	}
+
+	@Override
+	public boolean approvalInterReject(@Param("approval_commit_id") String approval_commit_id, @Param("approval_reject") String approval_reject) {
+		return mapper.approvalInterReject(approval_commit_id, approval_reject)==1?true:false;
+	}
+
+	@Override
+	public boolean approvalFinalReject(@Param("approval_commit_inter_check") String approval_commit_id, @Param("approval_reject") String approval_reject) {
+		return mapper.approvalInterReject(approval_commit_id, approval_reject)==1?true:false;
+	}
+	
+	
+	
+	/*
+	@Override
+	public int commTotalCnt(CriteriaDTO cri) {
+		return mapper.commTotalCnt(cri);
+	}
+
+	@Override
+	public ApprovalDTO commRead(String approval_id) {
+		return mapper.commRead(approval_id);
+	}
+	*/
 }

@@ -8,10 +8,10 @@
                 <main>
                     <div class="container-fluid px-4">
                     	<h1 class="mt-4 breadcrumb mb-4 layout-center">
-							<input type="text" name="mem_id" value='결재 조회' class="login-name" readonly/>   
+							<input type="text" name="mem_id" value='결재 수신' class="login-name" readonly/>   
 						</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Approval List</li>
+                            <li class="breadcrumb-item active">Approval Commit List</li>
                         </ol>
                         
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -31,6 +31,7 @@
             		<select name="type" id="">
 	            		<option value="W" <c:out value="${cri.type == 'W' ? 'selected':'' }"/>>결재내용</option>
 	            		<option value="T" <c:out value="${cri.type == 'T' ? 'selected':'' }"/>>결재ID</option>
+	            		<option value="C" <c:out value="${cri.type == 'C' ? 'selected':'' }"/>>사용자ID</option>
          	    	</select>
          	    	<input type="text" name="keyword" id="" value="${cri.keyword}"/>
          	    	<button class="btn btn-default" type="submit">Search</button>
@@ -57,7 +58,7 @@
 	  <tbody>
 	  	<c:forEach var="list" items="${list}" varStatus = "status">
 		    <tr>
-		      <th scope="row"><a href="/user/approvalRead?approval_id=${list.approval_id}&approval_commit_id=${list.approval_commit_id}"> ${list.approval_id}</a></th>
+		      <th scope="row"><a href="/user/approvalCommitRead?approval_id=${list.approval_id}&approval_commit_id=${list.approval_commit_id}"> ${list.approval_id}</a></th>
 		      <td>${list.mem_id}</td>
 		      <td>${list.approval_type_id}</td>
 		      <td>${list.approval_commit_id}</td>

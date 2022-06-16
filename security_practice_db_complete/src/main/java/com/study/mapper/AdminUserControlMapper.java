@@ -14,6 +14,8 @@ public interface AdminUserControlMapper {
 	// 사용자 회원가입시켜주기
 	public int userInsert(MemDTO user);
 	
+	public int memoInsert(MemDTO user);
+	
 	// 사용자에게 회원가입시켜주기 전에 권한부터 주기
 	public int authInsert(AuthorityDTO auth);
 	

@@ -111,7 +111,7 @@
 									          <tr>
 									          	<td class="text-center">${list.msg_id}</td>
 									            <td class="text-center">${list.sender_id}</td>
-									            <td class="text-center">${mem_id}</td>
+									            <td class="text-center">${list.receiver_id}</td>
 									            <td class="text-align:left;" id="content-block" style="border:none;">${list.msg_content}</td>
 									            <td class="text"><button type="button" class="btn btn-primary btn-sm msgView" 
 									            onclick="javascript:location.href = '/user/msg/msgRead/?msg_id=${list.msg_id}'">보기</button></td>
@@ -158,8 +158,7 @@
 											<input class="form-control" style="width: 15%;" type="text" name="memo_id" value="${memoRead.memo_id}" readonly="readonly"/>
 										</div>
 										<div>	
-											<input class="form-control" style="width: 15%;" type="text" name="mem_name" value='<sec:authentication property="principal.user.mem_name"/>' readonly="readonly"/>
-											<input type="hidden" style="width: 15%;" name="mem_id" value='<sec:authentication property="principal.username"/>' readonly="readonly"/>
+											<input class="form-control" style="width: 15%;" type="text" name="mem_name" value="${memoRead.mem_id}" readonly="readonly"/>
 										</div>
 										<div class="col-mb-6">
 									  <textarea class="form-control" style="resize: none;" rows="7" name="memo_content">${memoRead.memo_content}</textarea>

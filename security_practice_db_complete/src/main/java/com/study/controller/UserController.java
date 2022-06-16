@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.study.dto.ApprovalCommitDTO;
 import com.study.dto.ApprovalDTO;
 import com.study.dto.ApprovalFileDTO;
 import com.study.dto.AttDTO;
@@ -69,10 +71,6 @@ public class UserController {
 	// 4. 사용자 - 업무지원 - 인사 - 전체 직원 근태리스트
 	@Autowired
 	private HrService hrService;
-	
-	
-	
-	
 	
 	
 	
@@ -247,18 +245,47 @@ public class UserController {
     
     // 결재 리스트 부분
   	@GetMapping("/approvalList")
-    public String listGet(Model model, @ModelAttribute("cri") CriteriaDTO cri) {
-        log.info("전체리스트현황"+cri);
+    public String listGet(Model model, @ModelAttribute("cri") CriteriaDTO cri, Principal principal) {
+        log.info("전체리스트현황 - cri: "+cri);
         
-        List<ApprovalDTO> list = approvalService.select(cri);
-        
-        int total = approvalService.totalCnt(cri);
+        String mem_id=principal.getName();
+        log.info("mem_id: "+mem_id);
+        /*String[] typeArr = {};*/
+        List<ApprovalDTO> list = approvalService.select(cri,mem_id/*, typeArr*/);
+        List<ApprovalCommitDTO> commitList = new ArrayList<ApprovalCommitDTO>();
+        for (ApprovalDTO x:list) {
+        	commitList.add(approvalService.commitRead(x.getApproval_commit_id()));
+        }
 
+        int total = approvalService.totalCnt(cri,mem_id/*, typeArr*/);
         model.addAttribute("pageDto", new PageDTO(cri, total));
         model.addAttribute("list", list);
+        model.addAttribute("commitList", commitList);
         
         return "/user/approval/approval_list";
      } // 결재 리스트 끝
+  	
+  	// 결재 수신 리스트 부분
+  	@GetMapping("/approvalCommitList")
+   	public String commitListGet(Model model, @ModelAttribute("cri") CriteriaDTO cri, Principal principal) {
+        log.info("전체리스트현황 - cri: "+cri);
+        
+        String mem_id=principal.getName();
+        log.info("mem_id: "+mem_id);
+        /*String[] typeArr = {};*/
+        List<ApprovalDTO> list = approvalService.commitSelect(cri,mem_id/*, typeArr*/);
+        List<ApprovalCommitDTO> commitList = new ArrayList<ApprovalCommitDTO>();
+        for (ApprovalDTO x:list) {
+        	commitList.add(approvalService.commitRead(x.getApproval_commit_id()));
+        }
+
+        int total = approvalService.totalCnt(cri,mem_id/*, typeArr*/);
+        model.addAttribute("pageDto", new PageDTO(cri, total));
+        model.addAttribute("list", list);
+        model.addAttribute("commitList", commitList);
+        
+        return "/user/approval/approval_commit_list";
+     } // 결재 수신 리스트 끝
   	
   	
   	// 첨부 파일 부분
@@ -274,14 +301,70 @@ public class UserController {
   	
   	// 결재 하나 불러오기 - READ
     @GetMapping("/approvalRead")
-    public String readGet(Model model, String approval_id, @ModelAttribute("cri") CriteriaDTO cri) {
+    public String readGet(Model model, String approval_id, String approval_commit_id, @ModelAttribute("cri") CriteriaDTO cri) {
        log.info("게시물 요청"+approval_id);
        
        ApprovalDTO dto =  approvalService.read(approval_id);
+       ApprovalCommitDTO commitDto = approvalService.commitRead(approval_commit_id);
        model.addAttribute("dto",dto);
+       model.addAttribute("commitDto",commitDto);
        
        return "/user/approval/approval_read";
     }
+    
+ // 결재 하나 불러오기 - READ (수신용
+    @GetMapping("/approvalCommitRead")
+    public String commitReadGet(Model model, String approval_id, String approval_commit_id, @ModelAttribute("cri") CriteriaDTO cri) {
+       log.info("게시물 요청"+approval_id);
+       
+       ApprovalDTO dto =  approvalService.read(approval_id);
+       ApprovalCommitDTO commitDto = approvalService.commitRead(approval_commit_id);
+       model.addAttribute("dto",dto);
+       model.addAttribute("commitDto",commitDto);
+       
+       return "/user/approval/approval_commit_read";
+    }
+    
+    // 결재 수신 - 승인
+    @PostMapping("/approvalCommit")
+    public String approvalCommit(Model model, String approval_commit_id, String approval_inter_id,String approval_final_id, Principal principal){
+    	log.info("결재 승인 @@@@@@@@@@@@@@");
+    	String user_id = principal.getName();
+    	log.info("user_id : "+user_id);
+    	log.info("approval_inter_id : "+approval_inter_id);
+    	log.info("approval_final_id : "+approval_final_id);
+    	
+    	if (user_id.equals(approval_inter_id)) {
+    		approvalService.approvalInterCommit(approval_commit_id);
+    		log.info("중간승인 성공 @@@@@@@@@@@@@@");
+    	}
+    	else if (user_id.equals(approval_final_id)) {
+    		// 중간 승인 필요 하다고 할지 아니면 최종에서 바로 된거라 할 지
+    		// 중간 승인 필요하면 여기에 조건문 + return으로 jsp 하나 만들어 내보내주면 됨
+    		// 승인 이후 반려 안되게도 해야 할 듯
+    		approvalService.approvalFinalCommit(approval_commit_id);
+    		log.info("최종승인 성공 @@@@@@@@@@@@@@");
+    	}
+    	
+    	return "redirect:/user/approvalCommitList";
+    }
+    
+    // 결재 수신 - 반려
+    @PostMapping("/approvalReject")
+    public String approvalReject(Model model, String approval_commit_id, String approval_inter_id,String approval_final_id, String approval_reject, Principal principal){
+    	String user_id = principal.getName();
+    	if (user_id == approval_inter_id) {
+    		approvalService.approvalInterReject(approval_commit_id, approval_reject);
+    	}
+    	else if (user_id == approval_final_id) {
+    		// 중간 승인 필요 하다고 할지 아니면 최종에서 바로 된거라 할 지
+    		// 중간 승인 필요하면 여기에 조건문 + return으로 jsp 하나 만들어 내보내주면 됨
+    		approvalService.approvalFinalReject(approval_commit_id, approval_reject);
+    	}
+    	
+    	return "redirect:/user/approvalCommitList";
+    }
+    
   	///////////////////////////////////////////////////// 결재 부분 끝 //////////////////////////////////////////////////////////////////////////////////////
   	
     

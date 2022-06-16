@@ -1,16 +1,22 @@
 package com.study.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.study.dto.CustomUser;
 import com.study.dto.MemoDTO;
 import com.study.dto.MsgDTO;
 import com.study.service.MemoService;
@@ -58,14 +64,26 @@ public class SecurityController {
 		return "accessdenied";
 	}
 	
+	/*
+	public int addActivity(@RequestParam("name") String name,Activity activity,Hash hash,Authentication authentication) {
+	    //현재 로그인한 유저의 정보를 받아옵니다.
+	    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+	    Member m = memRepo.findOneByMid(userDetails.getUsername());
+	    List<Activity> activityList = m.getActivities();
+	    */
 	
 	// 사용자 main 페이지
 	@GetMapping("/user/index")
-	public String userPage(/* @RequestParam("mem_id") */String mem_id, Model model) {
+	public String userPage(Model model, Principal principal) {
 		log.info("user page 요청");
 		log.info("쪽지리스트 요청");
 		log.info("캘린더도 추가");
 		log.info("메모도 추가");
+		/*log.info("user! 희희희희 : ", user);*/
+		
+		String mem_id=principal.getName();
+		
+		log.info("prin_user 하.. : "+mem_id);
 		
 		List<MsgDTO> mList = msgService.mSelect(mem_id);
 		
@@ -79,9 +97,10 @@ public class SecurityController {
 	
 	// 사용자 main 페이지
 	@PostMapping("/user/index")
-	public String memoUpdate(MemoDTO memoRead, RedirectAttributes rttr) { 
+	public String memoUpdate(MemoDTO memoRead, Principal principal, RedirectAttributes rttr) { 
 		log.info("메모 수정 요청 ");
-		memoService.memoUpdate(memoRead); // 메모 수정 후 메인페이지 이동
+		String mem_id=principal.getName();
+		memoService.memoUpdate(memoRead.getMemo_content(),mem_id); // 메모 수정 후 메인페이지 이동
 		return "redirect:/user/index";
 	}
 	
@@ -110,9 +129,10 @@ public class SecurityController {
 	}
 	
 	@PostMapping("/user/msg/msgInsert")
-	public String msgInsertPost(@Param("receiver_id") String receiver_id, @Param("msg_content") String msg_content) {
+	public String msgInsertPost(@Param("receiver_id") String receiver_id, @Param("msg_content") String msg_content, Principal principal) {
 		log.info("insert 확인");
-		msgService.msgInsert(receiver_id, msg_content);
+		String mem_id=principal.getName();
+		msgService.msgInsert(mem_id, receiver_id, msg_content);
 		return "redirect:/user/index";
 		
 	}

@@ -7,7 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 public class CustomUser extends User {
@@ -16,10 +18,10 @@ public class CustomUser extends User {
 	private MemDTO user;
 	
 	
+	
 	public CustomUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
 	}
-
 
 	//생성자 생성
 	public CustomUser(MemDTO user) {
@@ -29,7 +31,6 @@ public class CustomUser extends User {
 														.collect(Collectors.toList()));
 		this.user = user;
 	}
-
 	
 	
 
